@@ -10,7 +10,7 @@
       "eofline": false,
       "quotemark": [
           true,
-          "single"
+          "double"
       ],
       "ordered-imports": [
           false
@@ -28,6 +28,7 @@
       "array-type": [
           false
       ],
+      "no-console": false,
       "no-empty-interface": false,
       "no-empty": false,
       "arrow-parens": false,
@@ -45,7 +46,8 @@
       ],
       "one-variable-per-declaration": [
           false
-      ]
+      ],
+      "semicolon": [true]
   },
   "rulesDirectory": []
 }
