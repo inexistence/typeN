@@ -80,4 +80,14 @@ export class KoaDriver extends BaseDriver {
     }
     return value;
   }
+
+  public handleSuccess(value: any, action: Action, actionMetadata: ActionMetadata): Promise<any>|any {
+    action.response.body = value;
+  }
+
+  public handleError(error: any, action: Action, actionMetadata?: ActionMetadata): Promise<any>|any {
+    action.response.status = 500;
+    action.response.body = error.message;
+    console.error(error);
+  }
 }

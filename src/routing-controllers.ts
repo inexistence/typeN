@@ -44,6 +44,11 @@ export class RoutingController<T extends BaseDriver> {
     const paramValues: any[] = await Promise.all(paramMetadatas.map(async paramMetadata => {
       return await this.actionParamsFactory.handleParams(action, paramMetadata);
     }));
-    await actionMetadata.callMethod(paramValues);
+    try {
+      const result = await actionMetadata.callMethod(paramValues);
+      return await this.driver.handleSuccess(result, action, actionMetadata);
+    } catch (error) {
+      return await this.driver.handleError(error, action, actionMetadata);
+    }
   }
 }

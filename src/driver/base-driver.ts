@@ -29,4 +29,8 @@ export abstract class BaseDriver {
   public abstract registerRoutes(): void;
 
   public abstract getParam(action: Action, param: ParamMetadata): any;
+
+  public abstract handleSuccess(value: any, action: Action, actionMetadata: ActionMetadata): Promise<any>| any;
+
+  public abstract handleError(error: any, action: Action, actionMetadata?: ActionMetadata): Promise<any>|any;
 }
