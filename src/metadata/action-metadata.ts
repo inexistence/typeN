@@ -1,6 +1,7 @@
 import { RequestMethod } from "./enums/request-methods";
 import { ControllerMetadata } from "./controller-metadata";
 import { ActionMetadataArgs } from "./args/action-metadata-args";
+import { ParamMetadata } from "./param-metadata";
 
 export class ActionMetadata {
   public route: string | RegExp;
@@ -9,6 +10,7 @@ export class ActionMetadata {
   public type: RequestMethod;
   public controller: ControllerMetadata;
   public method: string;
+  public params: ParamMetadata[];
 
   constructor(controller: ControllerMetadata, args: ActionMetadataArgs) {
     this.controller = controller;
@@ -43,5 +45,10 @@ export class ActionMetadata {
     const fullPath = `^${prefix}${route.toString().substr(1)}?$`;
 
     return new RegExp(fullPath, route.flags);
+  }
+
+  public async callMethod(params: any[] = []) {
+    const controllerInstance = this.controller.instance;
+    return await controllerInstance[this.method].apply(controllerInstance, params);
   }
 }

@@ -1,4 +1,6 @@
 import { ActionMetadata } from "../metadata/action-metadata";
+import { Action } from "../action";
+import { ParamMetadata } from "../metadata/param-metadata";
 
 export abstract class BaseDriver {
   /**
@@ -18,9 +20,13 @@ export abstract class BaseDriver {
    */
   public cors?: boolean | Object;
 
+  public useClassTransformer: boolean = true;
+
   public abstract initialize(): void;
 
-  public abstract registerAction(action: ActionMetadata): void;
+  public abstract registerAction(action: ActionMetadata, executor: (action: Action) => void): void;
 
   public abstract registerRoutes(): void;
+
+  public abstract getParam(action: Action, param: ParamMetadata): any;
 }

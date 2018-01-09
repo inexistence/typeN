@@ -1,5 +1,9 @@
 import { BaseDriver } from "../base-driver";
 import { ActionMetadata } from "../../metadata/action-metadata";
+import { Action } from "../../action";
+import { ParamMetadata } from "../../metadata/param-metadata";
+import { ParamType } from "../../metadata/enums/param-type";
+import * as _ from "lodash";
 
 export class KoaDriver extends BaseDriver {
   constructor(public koa?: any, public router?: any) {
@@ -34,11 +38,11 @@ export class KoaDriver extends BaseDriver {
     }
   }
 
-  public registerAction(action: ActionMetadata) {
+  public registerAction(action: ActionMetadata, executor: (action: Action) => void) {
     const route = ActionMetadata.appendBaseRoute(this.routePrefix, action.fullRoute);
     const routeHandler = async (context: any, next: () => Promise<any>) => {
-      const result = await action.controller.instance[action.method](context, next);
-      context.response.body = result;
+      const _action = { response: context.response, request: context.request, context, next };
+      return await executor(_action);
     };
     this.router[action.type.toLowerCase()](...[
       route,
@@ -49,5 +53,22 @@ export class KoaDriver extends BaseDriver {
   public registerRoutes() {
     this.koa.use(this.router.routes());
     this.koa.use(this.router.allowedMethods());
+  }
+
+  public getParam(action: Action, paramMetadata: ParamMetadata): any {
+    let value: any;
+    const key = paramMetadata.name;
+    switch (paramMetadata.type) {
+      case ParamType.QUERY:
+        value = key ? action.context.query[key] : _.toPlainObject(action.context.query);
+        break;
+      case ParamType.BODY:
+        value = key ? action.request.body[key] : _.toPlainObject(action.request.body);
+        break;
+      case ParamType.PARAM:
+        value = key ? action.context.params[key] : _.toPlainObject(action.context.params);
+        break;
+    }
+    return value;
   }
 }
