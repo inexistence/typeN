@@ -2,6 +2,7 @@ import "reflect-metadata";
 import { ActionMetadata } from "./action-metadata";
 import { ParamType } from "./enums/param-type";
 import { ParamMetadataArgs } from "./args/param-metadata-args";
+import { Action } from "../action";
 
 export class ParamMetadata {
   /**
@@ -45,6 +46,10 @@ export class ParamMetadata {
    */
   public required?: boolean;
 
+  public parse: boolean;
+
+  public transform?: (action: Action, value?: any) => Promise<any> | any;
+
   constructor(actionMetadata: ActionMetadata, arg: ParamMetadataArgs) {
     this.actionMetadata = actionMetadata;
     this.method = arg.method;
@@ -53,6 +58,9 @@ export class ParamMetadata {
     this.index = arg.index;
     this.name = arg.name;
     this.required = arg.required;
+    this.parse = arg.parse;
+    this.transform = arg.transform;
+
     // get param's type, number string or any other type.
     const ParamTypes = (Reflect as any).getMetadata("design:paramtypes", arg.object, arg.method);
     if (typeof ParamTypes !== "undefined") {

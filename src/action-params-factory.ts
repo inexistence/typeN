@@ -7,10 +7,10 @@ import { ParamMetadata } from "./metadata/param-metadata";
 export class ActionParamsFactory<T extends BaseDriver> {
   constructor(private readonly driver: T) {}
 
-  public handleParams(action: Action, param: ParamMetadata): any {
+  public async handleParams(action: Action, param: ParamMetadata): Promise<any> {
     let value = this.driver.getParam(action, param);
     value = this.normalizeParamValue(value, param);
-    value = this.handleValue(value, param);
+    value = await this.handleValue(value, param, action);
     return value;
   }
 
@@ -41,7 +41,7 @@ export class ActionParamsFactory<T extends BaseDriver> {
         return parsedDate;
 
       default:
-        if (value && paramMetadata.isTargetObject) {
+        if (value && paramMetadata.isTargetObject && paramMetadata.parse) {
           if (typeof value === "string") {
             try {
               value = JSON.parse(value);
@@ -58,7 +58,11 @@ export class ActionParamsFactory<T extends BaseDriver> {
     }
   }
 
-  protected handleValue(value: any, param: ParamMetadata): any {
+  protected async handleValue(value: any, param: ParamMetadata, action: Action): Promise<any> {
+    if (param.transform) {
+      value = await param.transform(action, value);
+    }
+
     if (param.required) {
       const isValueEmpty = value === null || value === undefined || value === "";
 

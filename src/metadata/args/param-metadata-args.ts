@@ -1,4 +1,5 @@
 import { ParamType } from "../enums/param-type";
+import { Action } from "../../action";
 
 export interface ParamMetadataArgs {
     /**
@@ -30,4 +31,8 @@ export interface ParamMetadataArgs {
      * Indicates if this parameter is required or not
      */
     required?: boolean;
+
+    parse: boolean;
+
+    transform?: (action: Action, value?: any) => Promise<any> | any;
 }

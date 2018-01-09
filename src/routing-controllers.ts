@@ -41,9 +41,9 @@ export class RoutingController<T extends BaseDriver> {
 
   protected async executeAction(action: Action, actionMetadata: ActionMetadata): Promise<void> {
     const paramMetadatas: ParamMetadata[] = actionMetadata.params.sort((param1, param2) => param1.index - param2.index);
-    const paramValues: any[] = paramMetadatas.map(paramMetadata => {
-      return this.actionParamsFactory.handleParams(action, paramMetadata);
-    });
+    const paramValues: any[] = await Promise.all(paramMetadatas.map(async paramMetadata => {
+      return await this.actionParamsFactory.handleParams(action, paramMetadata);
+    }));
     await actionMetadata.callMethod(paramValues);
   }
 }
