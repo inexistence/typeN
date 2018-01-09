@@ -3,4 +3,7 @@ export enum ParamType {
   QUERY = "query",
   PARAM = "param",
   CUSTOM = "custom-converter",
+  CONTEXT = "contex",
+  RES = "response",
+  REQ = "request",
 }

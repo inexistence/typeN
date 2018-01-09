@@ -68,6 +68,15 @@ export class KoaDriver extends BaseDriver {
       case ParamType.PARAM:
         value = key ? action.context.params[key] : _.toPlainObject(action.context.params);
         break;
+      case ParamType.CONTEXT:
+        value = action.context;
+        break;
+      case ParamType.REQ:
+        value = action.request;
+        break;
+      case ParamType.RES:
+        value = action.response;
+        break;
     }
     return value;
   }
